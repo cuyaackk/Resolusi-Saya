@@ -3,7 +3,10 @@ RENCANA CONTENT CUYAACKK
 -Javascript
   * ES6
   * Framework Javascript
+    *Vue
   
 -PHP Framework
+*laravel
 -Interview
 -vlogs
+-Phyton
