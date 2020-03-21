@@ -4,6 +4,7 @@ RENCANA CONTENT CUYAACKK
   * ES6
   * Framework Javascript
     *Vue
+    *react
   
 -PHP Framework
 *laravel
