@@ -1,11 +1,13 @@
 RENCANA CONTENT CUYAACKK
 
--Javascript
-  * ES6
-  * Framework Javascript
-    *Angular
-    *React
--PHP Framework
- *Codeigniter
--Interview
--vlogs
+- Javascript
+    * ES6
+    * Framework Javascript
+      *Vue
+      *react
+  
+- PHP Framework
+    *laravel
+- Interview
+- vlogs
+- Phyton
