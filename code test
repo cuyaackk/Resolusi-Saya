@@ -1,87 +1,88 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
 
-export default function Button(props) {
-  const className = [props.className];
-  if (props.isPrimary) className.push("btn-primary");
-  if (props.isLight) className.push("btn-light");
-  if (props.isLarge) className.push("btn-lg");
-  if (props.isSmall) className.push("btn-sm");
-  if (props.isBlock) className.push("btn-block");
-  if (props.hasShadow) className.push("btn-shadow");
+import { DateRange } from "react-date-range";
 
-  const onClick = () => {
-    if (props.onClick) props.onClick();
+import "./index.scss";
+import "react-date-range/dist/style.css";
+import "react-date-range/dist/default.css";
+
+import formatDate from "utils/formatDate";
+import iconCalender from "assets/images/icons/icon-calender.svg";
+
+export default function Date(props) {
+  const { value, placeholder, name } = props;
+  const [isShowed, setIsShowed] = useState(false);
+
+  const datePickerChange = (value) => {
+    const target = {
+      target: {
+        value: value.selection,
+        name: name,
+      },
+    };
+    props.onChange(target);
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+
+  const refDate = useRef(null);
+  const handleClickOutside = (event) => {
+    if (refDate && !refDate.current.contains(event.target)) {
+      setIsShowed(false);
+    }
   };
 
-  if (props.isDisabled || props.isLoading) {
-    if (props.isDisabled) className.push("disabled");
-    return (
-      <span className={className.join(" ")} style={props.style}>
-        {props.isLoading ? (
-          <>
-            <span className="spinner-border spinner-border-sm mx-5"></span>
-            <span className="sr-only">Loading...</span>
-          </>
-        ) : (
-          props.children
-        )}
-      </span>
-    );
-  }
+  const check = (focus) => {
+    focus.indexOf(1) < 0 && setIsShowed(false);
+  };
 
-  if (props.type === "link") {
-    if (props.isExternal) {
-      return (
-        <a
-          href={props.href}
-          className={className.join(" ")}
-          style={props.style}
-          target={props.target === "_blank" ? "_blank" : undefined}
-          rel={props.target === "_blank" ? "noopener noreferrer" : undefined}
-        >
-          {props.children}
-        </a>
-      );
-    } else {
-      return (
-        <Link
-          to={props.href}
-          className={className.join(" ")}
-          style={props.style}
-          onClick={onClick}
-        >
-          {props.children}
-        </Link>
-      );
-    }
-  }
-
+  const displayDate = `${value.startDate ? formatDate(value.startDate) : ""}${
+    value.endDate ? " - " + formatDate(value.endDate) : ""
+  }`;
   return (
-    <button
-      className={className.join(" ")}
-      style={props.style}
-      onClick={onClick}
+    <div
+      ref={refDate}
+      className={["input-date mb-3", props.outerClassName].join(" ")}
     >
-      {props.children}
-    </button>
+      <div className="input-group">
+        <div className="input-group-prepend bg-gray-900">
+          <span className="input-group-text">
+            <img src={iconCalender} alt="icon calender" />
+          </span>
+        </div>
+        <input
+          readOnly
+          type="text"
+          className="form-control"
+          value={displayDate}
+          placeholder={placeholder}
+          onClick={() => setIsShowed(!isShowed)}
+        />
+
+        {isShowed && (
+          <div className="date-range-wrapper">
+            <DateRange
+              editableDateInputs={true}
+              onChange={datePickerChange}
+              moveRangeOnFirstSelection={false}
+              onRangeFocusChange={check}
+              ranges={[value]}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
-Button.propTypes = {
-  type: propTypes.oneOf(["button", "link"]),
-  onClick: propTypes.func,
-  href: propTypes.string,
-  target: propTypes.string,
-  className: propTypes.string,
-  isPrimary: propTypes.bool,
-  isLight: propTypes.bool,
-  isExternal: propTypes.bool,
-  isDisabled: propTypes.bool,
-  isLoading: propTypes.bool,
-  isSmall: propTypes.bool,
-  isLarge: propTypes.bool,
-  isBlock: propTypes.bool,
-  hasShadow: propTypes.bool,
+Date.propTypes = {
+  value: propTypes.object,
+  onChange: propTypes.func,
+  placeholder: propTypes.string,
+  outerClassName: propTypes.string,
 };
